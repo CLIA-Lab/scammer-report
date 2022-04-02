@@ -1,0 +1,30 @@
+syntax = "proto3";
+package report;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/CLIA-Lab/scammer-report";
+
+// The report service definition.
+service Report {
+  // Get Report URL
+  rpc GetReport (ReportRequest) returns (ReportReply) {}
+}
+
+// The request message containing the user's report.
+message ReportRequest {
+  UserReport user_report = 1;
+}
+
+// The response message containing the greetings
+message ReportReply {
+  string bool = 1;
+}
+
+//The user's report
+message UserReport {
+  string public_key = 1;
+  repeated string description = 2;
+  string hash_transaction = 3;
+  google.protobuf.Timestamp send = 4;
+}
