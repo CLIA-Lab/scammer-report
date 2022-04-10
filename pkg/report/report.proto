@@ -7,7 +7,7 @@ option go_package = "github.com/CLIA-Lab/scammer-report";
 
 // The report service definition.
 service Report {
-  // Get Report URL
+  // Get Report
   rpc GetReport (ReportRequest) returns (ReportReply) {}
 }
 
@@ -18,7 +18,7 @@ message ReportRequest {
 
 // The response message containing the greetings
 message ReportReply {
-  string bool = 1;
+  string message = 1;
 }
 
 //The user's report

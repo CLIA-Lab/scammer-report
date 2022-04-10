@@ -16,10 +16,27 @@ limitations under the License.
 package cmd
 
 import (
+	"context"
 	"fmt"
+	"log"
+	"net"
+	"strings"
 
 	"github.com/spf13/cobra"
+	"golang.org/x/xerrors"
+
+	pb "github.com/CLIA-Lab/scammer-report/pkg/report"
+	"google.golang.org/grpc"
 )
+
+const (
+	port         = ":8000"
+	KuteGoAPIURL = "https://kutego-api-xxxxx-ew.a.run.app"
+)
+
+type Server struct {
+	pb.UnimplementedReportServer
+}
 
 // serverCmd represents the server command
 var serverCmd = &cobra.Command{
@@ -33,7 +50,53 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("server called")
+		lis, err := net.Listen("tcp", port)
+		if err != nil {
+			log.Fatalf("failed to listen: %v", err)
+		}
+		grpcServer := grpc.NewServer()
+
+		// Register services
+		pb.RegisterReportServer(grpcServer, &Server{})
+
+		log.Printf("GRPC server listening on %v", lis.Addr())
+
+		if err := grpcServer.Serve(lis); err != nil {
+			log.Fatalf("failed to serve: %v", err)
+		}
 	},
+}
+
+// GetGopher implements gopher.GopherServer
+func (s *Server) GetReport(ctx context.Context, req *pb.ReportRequest) (*pb.ReportReply, error) {
+	res := &pb.ReportReply{}
+
+	// Check request
+	if req == nil {
+		fmt.Println("request must not be nil")
+		return res, xerrors.Errorf("request must not be nil")
+	}
+
+	if req.UserReport.PublicKey == "" {
+		fmt.Println("public key must not be empty in the request")
+		return res, xerrors.Errorf("public key must not be empty in the request")
+	}
+
+	if req.UserReport.HashTransaction == "" {
+		fmt.Println("transaction hash must not be empty in the request")
+		return res, xerrors.Errorf("transaction hash must not be empty in the request")
+	}
+
+	if req.UserReport.Description == nil {
+		fmt.Println("description of the report must not be empty in the request")
+		return res, xerrors.Errorf("description of the report must not be empty in the request")
+	}
+
+	log.Printf("Received: %v", strings.Join(req.UserReport.Description, " "))
+
+	res.Message = "OK reported: user = " + req.UserReport.PublicKey + ", transaction = " + req.UserReport.HashTransaction
+
+	return res, nil
 }
 
 func init() {

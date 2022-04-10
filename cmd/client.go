@@ -16,9 +16,22 @@ limitations under the License.
 package cmd
 
 import (
+	"context"
 	"fmt"
+	"log"
+	"os"
+	"time"
+
+	"google.golang.org/grpc"
 
 	"github.com/spf13/cobra"
+
+	pb "github.com/CLIA-Lab/scammer-report/pkg/report"
+)
+
+const (
+	address     = "localhost:8000"
+	defaultName = "dr-who"
 )
 
 // clientCmd represents the client command
@@ -33,6 +46,29 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("client called")
+		var conn *grpc.ClientConn
+		conn, err := grpc.Dial(address, grpc.WithInsecure())
+		if err != nil {
+			log.Fatalf("did not connect: %s", err)
+		}
+		defer conn.Close()
+
+		client := pb.NewReportClient(conn)
+
+		var user pb.UserReport
+
+		// Contact the server and print out its response.
+		// name := defaultName
+		if len(os.Args) > 2 {
+			user.PublicKey, user.HashTransaction, user.Description = os.Args[2], os.Args[3], os.Args[4:]
+		}
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		defer cancel()
+		r, err := client.GetReport(ctx, &pb.ReportRequest{UserReport: &user})
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+		}
+		log.Printf("URL: %s", r.GetMessage())
 	},
 }
 
