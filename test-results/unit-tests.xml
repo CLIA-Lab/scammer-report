@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/CLIA-Lab/scammer-report">
+		<properties>
+			<property name="go.version" value="go1.18 linux/amd64"></property>
+		</properties>
+	</testsuite>
+	<testsuite tests="7" failures="0" time="0.000000" name="github.com/CLIA-Lab/scammer-report/cmd">
+		<properties>
+			<property name="go.version" value="go1.18 linux/amd64"></property>
+		</properties>
+		<testcase classname="github.com/CLIA-Lab/scammer-report/cmd" name="TestGetReport/req_with_empty_request" time="0.000000"></testcase>
+		<testcase classname="github.com/CLIA-Lab/scammer-report/cmd" name="TestGetReport/nil_request" time="0.000000"></testcase>
+		<testcase classname="github.com/CLIA-Lab/scammer-report/cmd" name="TestGetReport/req_with_empty_name" time="0.000000"></testcase>
+		<testcase classname="github.com/CLIA-Lab/scammer-report/cmd" name="TestGetReport/req_with_nil_user" time="0.000000"></testcase>
+		<testcase classname="github.com/CLIA-Lab/scammer-report/cmd" name="TestGetReport/req_ok#01" time="0.000000"></testcase>
+		<testcase classname="github.com/CLIA-Lab/scammer-report/cmd" name="TestGetReport/req_ok" time="0.000000"></testcase>
+		<testcase classname="github.com/CLIA-Lab/scammer-report/cmd" name="TestGetReport" time="0.000000"></testcase>
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="github.com/CLIA-Lab/scammer-report/pkg/report">
+		<properties>
+			<property name="go.version" value="go1.18 linux/amd64"></property>
+		</properties>
+	</testsuite>
+</testsuites>

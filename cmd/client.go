@@ -68,7 +68,7 @@ to quickly create a Cobra application.`,
 		if err != nil {
 			log.Fatalf("could not greet: %v", err)
 		}
-		log.Printf("URL: %s", r.GetMessage())
+		log.Printf("Response: %s", r.GetMessage())
 	},
 }
 

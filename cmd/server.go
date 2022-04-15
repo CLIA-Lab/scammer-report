@@ -30,8 +30,7 @@ import (
 )
 
 const (
-	port         = ":8000"
-	KuteGoAPIURL = "https://kutego-api-xxxxx-ew.a.run.app"
+	port = ":8000"
 )
 
 type Server struct {
@@ -77,6 +76,11 @@ func (s *Server) GetReport(ctx context.Context, req *pb.ReportRequest) (*pb.Repo
 		return res, xerrors.Errorf("request must not be nil")
 	}
 
+	if req.UserReport == nil {
+		fmt.Println("public key must not be nil in the request")
+		return res, xerrors.Errorf("user report must not be empty in the request")
+	}
+
 	if req.UserReport.PublicKey == "" {
 		fmt.Println("public key must not be empty in the request")
 		return res, xerrors.Errorf("public key must not be empty in the request")
@@ -88,7 +92,7 @@ func (s *Server) GetReport(ctx context.Context, req *pb.ReportRequest) (*pb.Repo
 	}
 
 	if req.UserReport.Description == nil {
-		fmt.Println("description of the report must not be empty in the request")
+		fmt.Println("description of the report must not be nil in the request")
 		return res, xerrors.Errorf("description of the report must not be empty in the request")
 	}
 
