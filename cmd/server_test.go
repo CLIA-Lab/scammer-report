@@ -16,34 +16,34 @@ func TestGetReport(t *testing.T) {
 
 	testCases := []struct {
 		name        string
-		req         *pb.ReportRequest
+		req         *pb.AddReportRequest
 		message     string
 		expectedErr bool
 	}{
 		{
 			name:        "req ok",
-			req:         &pb.ReportRequest{UserReport: &pb.UserReport{PublicKey: "9201948012402748", HashTransaction: "938642983659283659", Description: []string{"hola", "mundo"}, Send: timestamppb.Now()}},
+			req:         &pb.AddReportRequest{UserReport: &pb.UserReport{PublicKey: "9201948012402748", HashTransaction: "938642983659283659", Description: "hola mundo", Send: timestamppb.Now()}},
 			message:     "OK reported: user = 9201948012402748, transaction = 938642983659283659",
 			expectedErr: false,
 		},
 		{
 			name:        "req ok",
-			req:         &pb.ReportRequest{UserReport: &pb.UserReport{PublicKey: "9201948402748", HashTransaction: "93864298365921183659", Send: timestamppb.Now()}},
+			req:         &pb.AddReportRequest{UserReport: &pb.UserReport{PublicKey: "9201948402748", HashTransaction: "93864298365921183659", Send: timestamppb.Now()}},
 			expectedErr: true,
 		},
 		{
 			name:        "req with empty request",
-			req:         &pb.ReportRequest{},
+			req:         &pb.AddReportRequest{},
 			expectedErr: true,
 		},
 		{
 			name:        "req with nil user",
-			req:         &pb.ReportRequest{UserReport: nil},
+			req:         &pb.AddReportRequest{UserReport: nil},
 			expectedErr: true,
 		},
 		{
 			name:        "req with empty name",
-			req:         &pb.ReportRequest{UserReport: &pb.UserReport{}},
+			req:         &pb.AddReportRequest{UserReport: &pb.UserReport{}},
 			expectedErr: true,
 		},
 		{
@@ -61,7 +61,7 @@ func TestGetReport(t *testing.T) {
 			ctx := context.Background()
 
 			// call
-			response, err := s.GetReport(ctx, testCase.req)
+			response, err := s.AddReport(ctx, testCase.req)
 
 			t.Log("Got : ", response)
 

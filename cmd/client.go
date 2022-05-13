@@ -23,6 +23,7 @@ import (
 	"time"
 
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"github.com/spf13/cobra"
 
@@ -37,13 +38,8 @@ const (
 // clientCmd represents the client command
 var clientCmd = &cobra.Command{
 	Use:   "client",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Send report",
+	Long:  `Send report to the server. The report contains user public key, transaction hash and an optional description.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("client called")
 		var conn *grpc.ClientConn
@@ -56,15 +52,15 @@ to quickly create a Cobra application.`,
 		client := pb.NewReportClient(conn)
 
 		var user pb.UserReport
-
+		user.Send = timestamppb.Now()
 		// Contact the server and print out its response.
 		// name := defaultName
 		if len(os.Args) > 2 {
-			user.PublicKey, user.HashTransaction, user.Description = os.Args[2], os.Args[3], os.Args[4:]
+			user.PublicKey, user.HashTransaction, user.Description = os.Args[2], os.Args[3], os.Args[4]
 		}
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 		defer cancel()
-		r, err := client.GetReport(ctx, &pb.ReportRequest{UserReport: &user})
+		r, err := client.AddReport(ctx, &pb.AddReportRequest{UserReport: &user})
 		if err != nil {
 			log.Fatalf("could not greet: %v", err)
 		}

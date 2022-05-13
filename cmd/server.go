@@ -20,7 +20,6 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"strings"
 
 	"github.com/spf13/cobra"
 	"golang.org/x/xerrors"
@@ -40,13 +39,8 @@ type Server struct {
 // serverCmd represents the server command
 var serverCmd = &cobra.Command{
 	Use:   "server",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Server",
+	Long:  `Server waiting for reports.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("server called")
 		lis, err := net.Listen("tcp", port)
@@ -67,8 +61,8 @@ to quickly create a Cobra application.`,
 }
 
 // GetGopher implements gopher.GopherServer
-func (s *Server) GetReport(ctx context.Context, req *pb.ReportRequest) (*pb.ReportReply, error) {
-	res := &pb.ReportReply{}
+func (s *Server) AddReport(ctx context.Context, req *pb.AddReportRequest) (*pb.AddReportReply, error) {
+	res := &pb.AddReportReply{}
 
 	// Check request
 	if req == nil {
@@ -91,12 +85,12 @@ func (s *Server) GetReport(ctx context.Context, req *pb.ReportRequest) (*pb.Repo
 		return res, xerrors.Errorf("transaction hash must not be empty in the request")
 	}
 
-	if req.UserReport.Description == nil {
-		fmt.Println("description of the report must not be nil in the request")
+	if req.UserReport.Description == "" {
+		fmt.Println("description of the report must not be empty in the request")
 		return res, xerrors.Errorf("description of the report must not be empty in the request")
 	}
 
-	log.Printf("Received: %v", strings.Join(req.UserReport.Description, " "))
+	log.Printf("Received: %v", req.UserReport.Description)
 
 	res.Message = "OK reported: user = " + req.UserReport.PublicKey + ", transaction = " + req.UserReport.HashTransaction
 

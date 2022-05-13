@@ -8,23 +8,47 @@ option go_package = "github.com/CLIA-Lab/scammer-report";
 // The report service definition.
 service Report {
   // Get Report
-  rpc GetReport (ReportRequest) returns (ReportReply) {}
+  rpc AddReport (AddReportRequest) returns (AddReportReply) {};
+  rpc GetReport (GetReportRequest) returns (GetReportReply) {};
+  rpc ListReports (ListReportRequest) returns (stream ListReportReply) {};
 }
 
 // The request message containing the user's report.
-message ReportRequest {
+message AddReportRequest {
   UserReport user_report = 1;
 }
 
 // The response message containing the greetings
-message ReportReply {
+message AddReportReply {
   string message = 1;
+}
+
+
+// The request message containing the user's report.
+message GetReportRequest {
+  string public_key = 1;
+}
+
+// The response message containing the greetings
+message GetReportReply {
+  UserReport user_report = 1;
+}
+
+
+
+// The request message containing the user's report.
+message ListReportRequest { }
+
+// The response message containing the greetings
+message ListReportReply {
+  UserReport user_report = 1;
 }
 
 //The user's report
 message UserReport {
-  string public_key = 1;
-  repeated string description = 2;
+  string id = 1;
+  string public_key = 2;
   string hash_transaction = 3;
   google.protobuf.Timestamp send = 4;
+  string description = 5;
 }
